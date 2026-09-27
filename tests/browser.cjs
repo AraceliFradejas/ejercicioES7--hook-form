@@ -1,0 +1,70 @@
+// Ejecutar con Vite arrancado y Google Chrome instalado: npm run test:browser.
+const { chromium } = require('playwright');
+const assert = require('node:assert/strict');
+const path = require('node:path');
+const fs = require('node:fs');
+
+(async () => {
+  const browser = await chromium.launch({ channel: 'chrome', headless: true });
+  try {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+    const errors = [];
+    page.on('pageerror', (error) => errors.push(error.message));
+    await page.goto('http://127.0.0.1:5173');
+    await page.evaluate(() => document.fonts.ready);
+    fs.mkdirSync('docs/screenshots', { recursive: true });
+    const capture = (name) => page.screenshot({ path: path.join('docs/screenshots', name), fullPage: true });
+    const username = page.getByLabel('Nombre de usuario');
+    const email = page.getByLabel('Correo electrónico');
+    const password = page.locator('#password');
+    const submit = page.getByRole('button', { name: 'Crear mi perfil' });
+    await capture('registro-escritorio.png');
+    await submit.click();
+    await page.getByText('Introduce una contraseña.', { exact: true }).waitFor();
+    assert.equal(await page.getByRole('alert').count(), 3);
+    assert.equal(await username.evaluate((element) => element === document.activeElement), true);
+    await capture('campos-obligatorios.png');
+    await username.fill('   ');
+    await email.fill('correo-invalido');
+    await password.fill('abc');
+    await submit.click();
+    await page.getByText('El nombre no puede contener solo espacios.').waitFor();
+    assert.equal(await page.getByRole('alert').count(), 3);
+    await capture('validacion-patrones.png');
+    await username.fill('Araceli');
+    await email.fill('araceli@example.com');
+    await password.fill('Demo2026!');
+    await page.waitForFunction(() => document.querySelectorAll('[role="alert"]').length === 0);
+    await page.getByRole('button', { name: 'Mostrar contraseña' }).click();
+    assert.equal(await password.getAttribute('type'), 'text');
+    await page.getByRole('button', { name: 'Ocultar contraseña' }).click();
+    assert.equal(await password.getAttribute('type'), 'password');
+    const outgoingData = [];
+    page.on('request', (request) => { if (request.method() !== 'GET') outgoingData.push(request.url()); });
+    await password.press('Enter');
+    await page.getByRole('status').waitFor();
+    await page.waitForFunction(() => document.activeElement?.id === 'form-title');
+    assert.match(await page.locator('#form-title').textContent(), /Araceli/);
+    assert.equal(await page.locator('#form-title').evaluate((element) => element === document.activeElement), true);
+    assert.deepEqual(outgoingData, []);
+    assert.equal(await page.evaluate(() => localStorage.length + sessionStorage.length), 0);
+    await capture('registro-validado.png');
+    await page.getByRole('button', { name: 'Volver al formulario' }).click();
+    await page.waitForFunction(() => document.activeElement?.id === 'username');
+    for (const input of [username, email, password]) assert.equal(await input.inputValue(), '');
+    assert.equal(await password.getAttribute('type'), 'password');
+    assert.equal(await username.evaluate((element) => element === document.activeElement), true);
+    await page.setViewportSize({ width: 375, height: 812 });
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+    await capture('registro-movil.png');
+    await submit.click();
+    await page.getByRole('alert').first().waitFor();
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+    await page.setViewportSize({ width: 320, height: 720 });
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+    assert.deepEqual(errors, []);
+    console.log('OK: obligatorios, patrones, corrección, visibilidad, envío por teclado, confirmación, reinicio, foco, ausencia de persistencia y vista móvil.');
+  } finally {
+    await browser.close();
+  }
+})().catch((error) => { console.error(error); process.exitCode = 1; });

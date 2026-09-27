@@ -1,0 +1,26 @@
+.site { max-width: 1440px; margin: auto; padding: 0 64px; }
+.site-header { display: flex; justify-content: space-between; align-items: center; min-height: 112px; border-bottom: 1px solid #dedfd5; gap: 20px; }
+.brand { text-decoration: none; font-family: 'Manrope', sans-serif; font-size: 26px; font-weight: 800; display: flex; align-items: center; gap: 11px; letter-spacing: -1px; }
+.brand > span { background: #293e32; color: #eff2df; display: grid; place-items: center; width: 37px; height: 39px; border-radius: 10px; font-size: 31px; padding-bottom: 5px; }
+.course, .edition { font-size: 10px; font-weight: 600; letter-spacing: 1.4px; }
+.course span { margin: 0 17px; color: #85877a; }
+.edition { border: 1px solid #d8dacd; padding: 10px 13px; border-radius: 30px; }
+main { display: grid; grid-template-columns: 1.05fr 1fr; gap: 75px; padding: 64px 0 58px; align-items: center; }
+.eyebrow { font-size: 9px; letter-spacing: 1.8px; font-weight: 700; display: flex; align-items: center; gap: 10px; margin: 0 0 28px; }
+.eyebrow > span { width: 7px; height: 7px; border-radius: 50%; background: #6c8253; }
+h1 { font-family: 'Manrope', sans-serif; font-weight: 500; font-size: clamp(45px, 4.8vw, 66px); letter-spacing: -3.8px; line-height: 1.09; margin: 0 0 24px; }
+h1 em { font-family: Georgia, serif; font-weight: 400; color: #526749; letter-spacing: -2.5px; }
+.intro-copy { font-size: 14px; color: #666c62; line-height: 1.8; }
+.artwork { position: relative; height: 215px; max-width: 420px; margin-top: 25px; overflow: hidden; }
+.arch { position: absolute; border-radius: 110px 110px 0 0; width: 148px; height: 195px; }
+.arch-back { left: 135px; top: 8px; background: #d4dda9; transform: rotate(24deg); }
+.arch-front { left: 61px; top: 43px; background: repeating-linear-gradient(90deg, #668064 0, #668064 2px, #73916f 2px, #73916f 6px); transform: rotate(-18deg); }
+.art-dot { position: absolute; left: 290px; top: 30px; background: #dd9778; width: 30px; height: 30px; border-radius: 50%; }
+.art-line { position: absolute; bottom: 21px; left: 10px; width: 360px; height: 1px; background: #c7ccb8; }
+.art-caption { position: absolute; bottom: 4px; right: 30px; font-size: 7px; letter-spacing: 1.5px; color: #656c5d; }
+.intro-note { font-size: 11px; color: #69705f; margin-top: 25px; }.intro-note span { margin-right: 8px; }
+.form-panel { background: #fffefa; border: 1px solid #e6e7dc; border-radius: 16px; box-shadow: 0 12px 40px #303d2610; }
+footer { padding: 23px 0 29px; border-top: 1px solid #dedfd5; display: flex; justify-content: space-between; gap: 20px; font-size: 10px; color: #646a60; line-height: 1.7; }
+footer a { text-underline-offset: 3px; } footer > span:last-child { letter-spacing: 1px; font-size: 9px; }
+@media (max-width: 1000px) { .site { padding: 0 32px; } main { gap: 32px; } .course { display: none; } }
+@media (max-width: 720px) { .site { padding: 0 22px; } .site-header { min-height: 85px; } main { grid-template-columns: 1fr; padding: 37px 0; gap: 28px; } h1 { font-size: 48px; letter-spacing: -2.6px; } .eyebrow { font-size: 8px; letter-spacing: 1.2px; margin-bottom: 21px; } .artwork, .intro-note { display: none; } .intro-copy { margin-bottom: 0; } footer { flex-direction: column; gap: 8px; } }
